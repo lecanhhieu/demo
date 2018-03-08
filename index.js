@@ -9,28 +9,53 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const passsport = require('passport');
+const expressValidator = require('express-validator');
+const config = require ('./config/database');
+
+const routes = require('./routes'); //Cai này nó mặc đinh lấy file nào trên index trong thu muc.
 
 
 const app = express();
-app.listen(3000);
-mongoose.Promise = global.Promise
-const mongoDB = process.env.MONGODB_URI || 'mongodb://127.0.0.1/tutsplus-library'
-mongoose.connect(mongoDB)
+app.use(expressValidator()); 
 
+mongoose.connect(config.database);
+let db = mongoose.connection;
+
+db.once('open', function(){
+  console.log('Connected to MongoDB');
+  
+});
+
+db.on('error',function(err){
+  console.log(err);
+});
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.use(errorHandler());
 
-app.get('/',function(req,res){
-  res.render('home')
-})
+//  Connect all our routes to our application
+app.use('/', routes);
+
+// app.get('/',function(req,res){
+//   res.render('signup',{messages: {}})
+// })
+
+// let users = require('./routes/users');
+// app.use('/users', users);
+
+
+//Cai nay phai de cuoi cung.
+app.set('port', process.env.PORT || 8080)
+app.listen(app.get('port'), function(){console.log(`app is running on port ${app.get('port')}`)})
 
 module.exports = app;

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    h1 Login   
+        form(action="/login", method="post")
+            
+            #form-group
+                h4 Username
+                input.form-control(name = "username", type="text", value="hieule")
+            #form-group
+                h4 Password
+                input.form-control(name = "password", type="password", value="hieule")
+            input.btn.btn-primary(type="submit", value="Submit")

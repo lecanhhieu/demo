@@ -1,39 +1,16 @@
-extends layout
-.navbar.navbar-fixed-top
-.navbar-inner
-  .container-fluid
-    a.btn.btn-navbar(data-toggle="collapse", data-target=".nav-collapse")
-      span.icon-bar
-      span.icon-bar
-      span.icon-bar
-    a.brand(href="#") Demo website
-    .nav-collapse
-    ul.nav
-     li.active
-      a(href="#") Home
-     li
-      a(href="#about") About
-     li
-      a(href="#contact") Contact
-
-      ul.nav.navbar-nav.navbar-right
-      if !user
-        li(class=(title === 'Login') ? 'active' : undefined)
-          a(href='/login') Login
-        li(class=(title === 'Create Account') ? 'active' : undefined)
-          a(href='/signup') Create Account
-      else
-        li.dropdown(class=(title === 'Account Management') ? 'active' : undefined)
-          a.dropdown-toggle(href='#', data-toggle='dropdown')
-            if user.profile.picture
-              img(src=user.profile.picture)
-            else
-              img(src=user.gravatar(60))
-            span= user.profile.name || user.email || user.id
-            i.caret
-          ul.dropdown-menu
-            li
-              a(href='/account') My Account
-            li.divider
-            li
-              a(href='/logout') Logout
+nav.navbar.navbar-expand-lg.navbar-light.bg-light
+	a.navbar-brand(href='#') Demo website login
+	button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavDropdown', aria-controls='navbarNavDropdown', aria-expanded='false', aria-label='Toggle navigation')
+		span.navbar-toggler-icon
+	#navbarNavDropdown.collapse.navbar-collapse
+		ul.navbar-nav
+			li.nav-item.active
+				a.nav-link(href='/views/home')
+					| Home 
+					span.sr-only (current)
+			li.nav-item.dropdown
+				a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+					| Dropdown link
+				.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
+					a.dropdown-item(href='/login') Login
+					a.dropdown-item(href='/users/signup') Signup

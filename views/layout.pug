@@ -8,14 +8,14 @@ html(lang = 'en')
     meta(name='theme-color' content='#4DA5F4')
     meta(name='csrf-token', content=_csrf)
     link(rel='stylesheet' , href='main.css')
-    link(rel='stylesheet', href='https://bootswatch.com/paper/bootstrap.css')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css')
+    script(src='https://code.jquery.com/jquery-3.2.1.slim.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js')
     body
-        include partials/header.pug
-
+        include header.pug
+        
         .container
-          include partials/flash
+          include flash
           block content
 
-        include partials/footer
+        //include footer

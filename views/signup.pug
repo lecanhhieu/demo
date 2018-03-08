@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    h1 Signup   
+        form(action="/users/signup", method="post")
+            #form-group
+                h4 Name
+                input.form-control(name = "name", type="text", value="hieu")
+            #form-group
+                h4 Email
+                input.form-control(name = "email", type="text", value="hieu@gmail.com")
+            #form-group
+                h4 Username
+                input.form-control(name = "username", type="text", value="hieule")
+            #form-group
+                h4 Password
+                input.form-control(name = "password", type="password", value="hieule")
+            input.btn.btn-primary(type="submit", value="Submit")
