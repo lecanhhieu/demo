@@ -11,6 +11,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passsport = require('passport');
 const expressValidator = require('express-validator');
+const favicon = require('serve-favicon');
+
 const config = require ('./config/database');
 
 const routes = require('./routes'); //Cai này nó mặc đinh lấy file nào trên index trong thu muc.
@@ -53,6 +55,22 @@ app.use('/', routes);
 // let users = require('./routes/users');
 // app.use('/users', users);
 
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+
+app.use(function(err, req, res, next) {
+
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
 //Cai nay phai de cuoi cung.
 app.set('port', process.env.PORT || 8080)

@@ -1,3 +1,56 @@
 extends layout
 block content
   h1 Hello 
+  .container
+    h2 NodeJs MongoDB example - View Insert, Update, Delete records
+    .success
+    .error
+    form(id='form1' action='/addProduct' method= 'post')
+      input#id(type='hidden', name='id', value='')
+      table 
+        tr
+          td(style='text-align: center')
+            input#name(type='text', name='name', placeholder='Name', value='')
+            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#desc(type='text', name='desc', placeholder='Description', value='')
+            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            input#subbtn(type='submit', name='sub', value='Add Product')
+    table
+      tbody
+        tr
+          th ID
+          th Name
+          th Descriprion
+          th Action
+        if data
+          if data.length
+          each item in data
+            tr
+              td #{item['_id']}
+              td #{item['name']}
+              td #{item['desc']}
+              td
+                a.editlink(href='javascript:void(0)'
+                            , data-id=`${item['_id']}`
+                            , data-name=`${item['name']}`
+                            , data-desc=`${item['desc']}`
+                            ) Edit
+                | &nbsp;&nbsp;
+                a(href=`/delete?id=${item['_id']}`, onclick='return confirm("You are going to delete this record. Continue?")') Delete
+    script.
+      $(function() { 
+        $('.editlink').on('click', function(){
+          var id = $(this).data('id');
+          var name = $(this).data('name');
+          var desc = $(this).data('desc');
+          console.log('name',desc);
+
+          $('#id').val(id);
+          $('#name').val(name);
+          $('#desc').val(desc);
+
+          $("#subbtn").val('Edit Product');
+          $('#form1').attr('action', '/edit');
+          
+        });
+      });

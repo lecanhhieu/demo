@@ -7,87 +7,34 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+//database collections
+let User = require('../models/user');
+let Products = require('../models/products');
 
 
-let User =  require('../models/user');
 const userController = require('../controller/UserController');
 //Day la vi du, dung controler. chuyen tat ca function vao controler nhe
-router.get('/', userController.signup);
+router.get('/users/signup', userController.signup);
+router.get("/user", userController.user);
 
-//router.get('/signup',function(req, res){
-//    res.render('signup',{messages: {}})
-//});
+router.post('/login', userController.login);
 
 
-router.get("/user",function(req,res,next){
-    console.log(req.params.id)
-    if(req.params.id == 0) {
-      res.json({"message" : "You must pass ID other than 0"});    
-    }
-    else next();
-  });
-
-router.post('/login',function(req, res){
-    const { username,password } = req.body;
-
-    User.find({username : username}, function(err, usr) {
-
-        if(err){
-            console.log(err);
-            return res.status(500).send();
-        }
-
-        console.log('user >>>', usr)
-        if(!usr){
-            return res.status(404).send();
-        }
-        console.log('begin to compared', password)
-
-        bcrypt.compare(password, usr.password, function(err, isMatch) {
-            if (err) return res.end('wrong pass');
-            res.end('redirect to home');
-        });
-
-        // //No deo lay duoc function trong method
-        // usr.comparePass(password,   (err, isMatch) => {
-        //     console.log('compared')
-        //     if(!isMatch)
-        //         res.end('wrong pass');
-        //     res.end('redirect to home');
-        // })
-    });
-
-    // User.findOne({username : username, password : passwordHashed}, function(err, user){
-
-    //     //err na dinh nghiax owr dau ???
-    //     if(err){
-    //         console.log(err);
-    //         return res.status(500).send();
-    //     }
-
-    //     console.log('user >>>', user)
-
-    //     if(!user){
-    //         console.log(err)
-    //         return res.status(404).send();
-    //     }
-    //     //req.session.user = user;
-    //     return res.status(200).send();
-    // })
-});
-
-router.get('/home',function(req, res){
+router.get('/home', function (req, res) {
     //console.log xet loi
     console.log(req.session)
-    if(!req.session.user){
+    if (!req.session.user) {
         return res.status(401).send();
     }
 
     return res.status(200).send('Wellcome to Login Demo Web');
 });
-  
-router.post('/users/signup',function(req, res){
-    const {name,email,username,password } = req.body;
+
+router.post('/users/signup', function (req, res) {
+    const { name, email, username, password } = req.body;
     // const name = req.body.name;
     // const email = req.body.email;
     // const username = req.body.username;
@@ -105,44 +52,96 @@ router.post('/users/signup',function(req, res){
 
     console.log('coming up');
 
-    if(errors){
-        res.render('signup',{
-            messages : {errors: errors}
+    if (errors) {
+        res.render('signup', {
+            messages: { errors: errors }
         });
-    } else{
+    } else {
         console.log('ok');
         let newUser = new User({
-            name : name,
-            email : email,
-            username : username,
-            password : password
+            name: name,
+            email: email,
+            username: username,
+            password: password
         });
 
         //Nhin cho nay. m hash pasword truwosc khi dua vao db
-        bcrypt.genSalt(10, function(err, salt){
-            bcrypt.hash(newUser.password, salt, function(err, hash){
-                if(err){
+        bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(newUser.password, salt, function (err, hash) {
+                if (err) {
                     console.log(err);
                 }
                 newUser.password = hash;
-                newUser.save(function(err){
-                    if(err){
+                newUser.save(function (err) {
+                    if (err) {
                         console.log(err);
                         return;
-                    }else{
-                        res.render('login',{
-                            messages : 'You are now registered and can log in'
+                    } else {
+                        res.render('login', {
+                            messages: 'You are now registered and can log in'
                         });
                     }
                 });
             });
         });
     }
-    
+
 });
 
-router.get('/login',function(req, res){
-    res.render('login', {messages : {}});
+router.get('/login', function (req, res) {
+    res.render('login', { messages: {} });
 });
 
-module.exports = router;
+router.get('/products', function (req, res, next) {
+    Products.find(function (err, docs) {
+        console.log('docs >>', docs)
+        if (err) throw err;
+        res.render('home.pug', { data: docs });
+    });
+});
+
+
+
+router.post('/addProduct', function (req, res, next) {
+
+    const product = new Products({
+        name: req.body.name,
+        desc: req.body.desc
+    })
+
+    product.save(function (err, result) {
+        if (err) { throw err; }
+        res.redirect('/products');
+    })
+});
+
+router.post('/edit', function (req, res, next) {
+
+    console.log(req.body);
+
+    Products.findOneAndUpdate({ _id: req.body.id },
+        {
+            name: req.body.name,
+            desc: req.body.desc
+        }, { upsert: true }, function (err, data) {
+            if (err) return res.send(500, { error: err });
+            res.redirect('/products');
+        })
+});
+
+router.get('/delete', function (req, res, next) {
+    var id = req.query.id;
+
+    Products.remove({ _id: id }, function (err) {
+        if (!err) {
+            res.redirect('/products')
+        }
+        else {
+            throw err;
+        }
+    });
+    //res.redirect('/products')
+});
+
+
+module.exports = router;    

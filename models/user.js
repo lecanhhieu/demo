@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
-let UserSchema = mongoose.Schema({
+var Schema = mongoose.Schema;
+
+let UserSchema = new Schema({
     email: {
         type: String,
         required: true,
@@ -15,20 +17,14 @@ let UserSchema = mongoose.Schema({
         required: true,
       }
 });
-//DKm deo hieu luon
 
-UserSchema.methods.comparePass = function(candidatePassword, cb) {
-  console.log('candidatePassword >>>', candidatePassword, 'this.pass' , this.password)
-  cb(true); 
-}
-//hieu roi. phai dung arrow function
-// UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-//   console.log('candidatePassword >>>', candidatePassword)
-//   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-//       if (err) return cb(err);
-//       cb(null, isMatch);
-//   });
-// };
+UserSchema.methods.comparePassword = function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+      if (err) return cb(err);
+      cb(null, isMatch);
+  });
+};
 
+let User = mongoose.model('User', UserSchema);
 
-const User = module.exports = mongoose.model('User', UserSchema);
+module.exports = User;
