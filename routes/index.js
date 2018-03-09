@@ -22,6 +22,10 @@ router.get("/user", userController.user);
 
 router.post('/login', userController.login);
 
+router.get('/hello', function (req, res) {
+    //console.log xet loi
+    res.render('hello');
+});
 
 router.get('/home', function (req, res) {
     //console.log xet loi

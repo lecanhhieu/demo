@@ -48,9 +48,9 @@ app.use(errorHandler());
 //  Connect all our routes to our application
 app.use('/', routes);
 
-// app.get('/',function(req,res){
-//   res.render('signup',{messages: {}})
-// })
+app.get('/',function(req,res){
+  res.render('hello',{messages: {}})
+})
 
 // let users = require('./routes/users');
 // app.use('/users', users);

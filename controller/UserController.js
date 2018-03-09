@@ -11,7 +11,6 @@ function signup(req, res) {
     res.render('signup', { messages: {} })
 }
 
-
 function user(req, res, next) {
     console.log(req.params.id)
     if (req.params.id == 0) {
@@ -47,6 +46,7 @@ function login(req, res) {
         })
     })
 };
+
 
 module.exports = {
     signup,
